@@ -1,0 +1,21 @@
+{
+  "name": "json-samples",
+  "version": "0.0.1",
+  "description": "Pick and download sample json files from a preset list. Add your own.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "JSON",
+    "sample",
+    "download"
+  ],
+  "author": "Nicky Out",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^0.22.1",
+    "got": "^3.3.0",
+    "minimist": "^1.1.1"
+  }
+}
