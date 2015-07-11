@@ -1,11 +1,13 @@
-var argv = require('minimist')(process.argv.slice(2));
+var argv = require('minimist')(process.argv.slice(2)),
+	jsonSample = require('../lib/json-sample');
 if (argv._.length > 0) {
-	require('../index')(argv._[0], argv._[1], function(err, result) {
+
+	jsonSample.download(argv._[0], argv._[1], function(err, path) {
 		if (err) {
 			console.error("Error: " + err.message);
 		} else {
-			console.log("Written to ", result.path);
-			console.log(result.meta);
+			console.log("Written to ", path);
+			console.log(path);
 		}
 	});
 } else {

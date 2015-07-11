@@ -16,6 +16,7 @@
   "dependencies": {
     "fs-extra": "^0.22.1",
     "got": "^3.3.0",
-    "minimist": "^1.1.1"
+    "minimist": "^1.1.1",
+    "promise": "^7.0.3"
   }
 }
