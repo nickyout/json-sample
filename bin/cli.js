@@ -1,7 +1,6 @@
 var argv = require('minimist')(process.argv.slice(2)),
-	jsonSample = require('../lib/json-sample');
+	jsonSample = require('../lib/registry/index');
 if (argv._.length > 0) {
-
 	jsonSample.download(argv._[0], argv._[1], function(err, path) {
 		if (err) {
 			console.error("Error: " + err.message);
