@@ -4,10 +4,13 @@ var fse = require('fs-extra'),
 	readJSON = Promise.denodeify(fse.readJSON),
 	JSONSampleRegistry = require('./lib/registry/class'),
 	extractStats = require('./lib/registry/extract-stats'),
+	search = require('./lib/registry/search'),
+	sync = require("./lib/registry/sync"),
 	jsonDownload = require('./lib/util/json-download');
 
-var log = function(str, forced) {
-		console.log("json-sample:", str + (forced ? " (forced)." : "."));
+var log = console.log.bind(console, "json-sample:"),
+	logForced = function(str, forced) {
+		log(str + (forced ? " (forced)" : ""));
 	},
 	logError = function(str, error, skipping) {
 		log(str + ": \"" + error.message + "\"." + skipping ? " Skipping..." : "");
@@ -16,7 +19,7 @@ var log = function(str, forced) {
 		if (typeof numErrors === "number") {
 			log("Done ("+ numErrors + " error"+(numErrors===1?"":"s")+").")
 		} else {
-			log("Done");
+			log("Done.");
 		}
 	};
 
@@ -26,56 +29,17 @@ var localRegistryPath = path.resolve(__dirname, 'registry.json'),
 module.exports = {
 
 	sync: function(force) {
-		var remoteNames = [],
-			numErrors = 0;
-		return localRegistry.read()
-			.then(function(result) {
-				var remotes = result.remotes,
-					downloads = [],
-					remoteName;
-				for (remoteName in remotes) {
-					remoteNames.push(remoteName);
-					downloads.push(
-						jsonDownload(remotes[remoteName])
-							.catch(function(err) {
-								numErrors++;
-								logError('failed to read registry', err, true);
-							})
-					);
-				}
-				return Promise.all(downloads);
-			})
-			.then(function(results) {
-				var merges = [],
-					i;
-				for (i = 0; i < results.length; i++) {
-					if (results[i]) {
-						merges.push(
-							localRegistry.merge(results[i].obj, force)
-								.catch(function(err) {
-									numErrors++;
-									logError('failed to sync with registry', err, true);
-								}));
-					}
-				}
-				return Promise.all(merges);
-			})
-			.then(function(results) {
-				var i, totalStats = {
-					added: 0,
-					updated: 0
-				};
-				for (i = 0; i < results.length; i++) {
-					if (results[i]) {
-						totalStats.added += results[i].added;
-						totalStats.updated += results[i].updated;
-					}
-				}
-				log("sync complete: " + totalStats.added + " added, " + totalStats.updated + " updated", force);
+		var totalStats;
+		return sync(localRegistry, logError, force)
+			.then(function(stats) {
+				totalStats = stats;
+				logForced("sync complete: "
+					+ stats.added + " added, "
+					+ stats.updated + " updated", stats.force);
 			})
 			.then(localRegistry.write)
 			.done(function() {
-				logDone(numErrors);
+				logDone(totalStats.numErrors);
 			});
 	},
 
@@ -105,7 +69,7 @@ module.exports = {
 			})
 			.then(localRegistry.write)
 			.then(function() {
-				log("sample " + name + " added to registry", force);
+				logForced("sample " + name + " added to registry", force);
 			})
 			.done(function() {
 				logDone();
@@ -113,24 +77,55 @@ module.exports = {
 	},
 
 	install: function() {
-		var numErrors = 0;
-		Promise.all([readJSON('./json-samples.json'), localRegistry.read()])
+		var numErrors = 0,
+			myRegistrySamples,
+			theirRequestedSamples;
+		Promise.all([localRegistry.read(), readJSON('./json-samples.json')])
 			.catch(function(err) {
-				logError("Could not read json-samples", err);
+				logError("could not read json-samples.json", err);
 				throw err;
 			})
 			.then(function(results) {
-				var requestedJSON = results[0],
-					registrySamples = results[1].samples,
-					downloadables = [],
-					jsonName;
+				myRegistrySamples = results[0].samples;
+				theirRequestedSamples = results[1].samples;
 
-				for (jsonName in requestedJSON) {
-					if (!registrySamples.hasOwnProperty(jsonName)) {
-						log("sample " + jsonName + " not present in registry. Skipping...");
+				// The request comes with remotes, but do we need them?
+				if (results[1].remotes) {
+					// First check if all requested samples are already known
+					for (var sampleName in theirRequestedSamples) {
+						if (!myRegistrySamples.hasOwnProperty(sampleName)) {
+							// If not, assume we need the remotes
+							return localRegistry.mergeRemotes(results[1])
+								.then(function(stats) {
+									// Did the remotes come with registries we did not yet now?
+									if (stats.added) {
+										log("syncing remotes from json-samples.json...");
+										// Then sync
+										return sync(localRegistry, logError, true)
+											.then(function(stats) {
+												numErrors += stats.numErrors;
+												logForced("sync complete: "
+													+ stats.added + " added, "
+													+ stats.updated + " updated", stats.force);
+											})
+									}
+								});
+						}
+					}
+				}
+			})
+			// Assuming we've done the best we can do in getting a complete registry...
+			.then(function() {
+				var downloadables = [],
+					sampleName;
+
+				for (sampleName in theirRequestedSamples) {
+					if (!myRegistrySamples.hasOwnProperty(sampleName)) {
+						numErrors++;
+						log("sample " + sampleName + " not present in registry. Skipping...");
 					} else {
 						downloadables.push(
-							jsonDownload(registrySamples[jsonName].url, requestedJSON[jsonName])
+							jsonDownload(myRegistrySamples[sampleName].url, theirRequestedSamples[sampleName])
 								.then(function(result) {
 									log("saved to " + result.path);
 								})
@@ -148,8 +143,15 @@ module.exports = {
 			});
 	},
 
-	search: function(grepStr, options) {
-
+	search: function(query) {
+		return localRegistry.read()
+			.then(function(data) {
+				return search(data, query);
+			})
+			.done(function(result) {
+				log(result);
+				logDone();
+			});
 	}
 
 };
