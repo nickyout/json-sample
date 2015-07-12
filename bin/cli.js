@@ -5,6 +5,8 @@ var argv = require('minimist')(process.argv.slice(2)),
 	Promise = require('promise'),
 	api = require("../index");
 
+var argEtcWhiteList = ['_', 'h', 'help', 'v', 'verbose', 'f', 'force', 'V', 'version'];
+
 var argMap = {
 	'tags': 		[String, 'tags'],
 	'date': 		[String, 'date'],
@@ -23,6 +25,10 @@ var argMap = {
 	'homogen': 		[Number, 'stats.object.homogenity'],
 	'homogenity': 	[Number, 'stats.object.homogenity']
 };
+
+function isArgValid(arg) {
+	return argMap.hasOwnProperty(arg) || argEtcWhiteList.indexOf(arg) > -1;
+}
 
 var isVerbose = !!(argv.verbose || argv.v);
 
@@ -48,15 +54,27 @@ api.on('query', function (result) {
 });
 
 function runCommand(argv) {
-	var command,
+	var command = argv._[0],
 		tags = null,
 		force = argv.force || argv.f,
 		query,
 		arg;
-	if (argv.h || argv.help) {
-		barfHelp(argv.help, 0);
+	if (!command || argv.h || argv.help) {
+		barfHelp(!command || argv.help, 0);
+		return Promise.resolve();
+	} else if (argv.V || argv.version) {
+		console.log("Enter version here.");
 		return Promise.resolve();
 	} else if (argv._.length > 0) {
+		// Sanity check
+		for (arg in argv) {
+			if (!isArgValid(arg)) {
+				return Promise.reject({
+					error: new Error("Unknown option: " + arg + "\n"),
+					needHelp: true
+				});
+			}
+		}
 		// Run a command
 		command = argv._[0];
 		switch (command) {
@@ -87,16 +105,10 @@ function runCommand(argv) {
 			default:
 				// No such command
 				return Promise.reject({
-					error: new Error("Unknown command " + command),
+					error: new Error("Unknown command " + command + "\n"),
 					needHelp: true
 				});
 		}
-	} else {
-		// No command to run
-		return Promise.reject({
-			//error: new Error("No command specified.");
-			needHelp: true
-		});
 	}
 }
 
@@ -108,10 +120,10 @@ function barfHelp(verbose, exitCode) {
 runCommand(argv)
 	.catch(function(e) {
 		if (e.error) {
-			console.error(e.error.message);
+			console.error("json-sample:", e.error.message);
 		}
 		if (e.needHelp) {
-			barfHelp(true, 1);
+			barfHelp(false, 1);
 		} else {
 			process.exit(1);
 		}
