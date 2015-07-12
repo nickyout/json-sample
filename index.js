@@ -6,7 +6,12 @@ var fse = require('fs-extra'),
 	extractStats = require('./lib/registry/extract-stats'),
 	jsonDownload = require('./lib/util/json-download');
 
-var log = console.log.bind(console, "json-sample:"),
+var log = function(str, forced) {
+		console.log("json-sample:", str + (forced ? " (forced)." : "."));
+	},
+	logError = function(str, error, skipping) {
+		log(str + ": \"" + error.message + "\"." + skipping ? " Skipping..." : "");
+	},
 	logDone = function(numErrors) {
 		if (typeof numErrors === "number") {
 			log("Done ("+ numErrors + " error"+(numErrors===1?"":"s")+").")
@@ -34,7 +39,7 @@ module.exports = {
 						jsonDownload(remotes[remoteName])
 							.catch(function(err) {
 								numErrors++;
-								log('failed to read registry: "' + err.message + '". Skipping...');
+								logError('failed to read registry', err, true);
 							})
 					);
 				}
@@ -49,7 +54,7 @@ module.exports = {
 							localRegistry.merge(results[i].obj, force)
 								.catch(function(err) {
 									numErrors++;
-									log('failed to sync with registry:"' + err.message + '". Skipping...');
+									logError('failed to sync with registry', err, true);
 								}));
 					}
 				}
@@ -66,7 +71,7 @@ module.exports = {
 						totalStats.updated += results[i].updated;
 					}
 				}
-				log("sync complete: " + totalStats.added + " added, " + totalStats.updated + " updated.");
+				log("sync complete: " + totalStats.added + " added, " + totalStats.updated + " updated", force);
 			})
 			.then(localRegistry.write)
 			.done(function() {
@@ -75,10 +80,15 @@ module.exports = {
 	},
 
 	add: function(name, url, tags, force) {
-		return jsonDownload(url)
-			.catch(function(err) {
-				log("Could not download JSON: \"" + err.message + "\"");
-				throw err;
+		return localRegistry.read()
+			.then(function(data) {
+				if (data.samples.hasOwnProperty(name) && !force) {
+					throw new Error("sample "+name+" already present in registry");
+				}
+				return jsonDownload(url).catch(function(err) {
+					logError("Could not download JSON", err);
+					throw err;
+				});
 			})
 			.then(function(result) {
 				return localRegistry.add(name, {
@@ -90,12 +100,12 @@ module.exports = {
 				}, force);
 			})
 			.catch(function(err) {
-				log("Could not create new entry: \"" + err.message + "\"");
+				logError("could not create new entry", err);
 				throw err;
 			})
 			.then(localRegistry.write)
 			.then(function() {
-				log("sample " + name + " added to registry.");
+				log("sample " + name + " added to registry", force);
 			})
 			.done(function() {
 				logDone();
@@ -106,7 +116,7 @@ module.exports = {
 		var numErrors = 0;
 		Promise.all([readJSON('./json-samples.json'), localRegistry.read()])
 			.catch(function(err) {
-				log("Could not read json-samples: "+ err.message);
+				logError("Could not read json-samples", err);
 				throw err;
 			})
 			.then(function(results) {
@@ -126,7 +136,7 @@ module.exports = {
 								})
 								.catch(function(err) {
 									numErrors++;
-									log("failed to create: \"" + err.message + "\". Skipping...");
+									logError("failed to create", err, true);
 								})
 						);
 					}
