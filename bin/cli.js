@@ -1,12 +1,13 @@
 var argv = require('minimist')(process.argv.slice(2)),
 	path = require('path'),
-	help = require('help')(path.resolve(__dirname, 'help.txt')),
-	logQuery = require('./stringify-query'),
+	help = require('help'),
+	parseQuery = require('../lib/util/parse-query'),
 	Promise = require('promise'),
 	api = require("../index");
 
 var argMap = {
 	'tags': 		[String, 'tags'],
+	'date': 		[String, 'date'],
 	'bytes': 		[String, 'numBytes'],
 	'max-depth': 	[Number, 'stats.maxDepth'],
 	'objects': 		[Number, 'stats.object.amount'],
@@ -41,7 +42,7 @@ api.on("done", function(stats) {
 	console.log("json-sample: Done (" + numErrors + " error" + ((numErrors === 1) ? "" : "s") + ").");
 });
 api.on('query', function (result) {
-	logQuery(result, isVerbose).forEach(function(str) {
+	parseQuery(result, isVerbose).forEach(function(str) {
 		console.log(str);
 	});
 });
@@ -52,8 +53,8 @@ function runCommand(argv) {
 		force = argv.force || argv.f,
 		query,
 		arg;
-	if (argv.help) {
-		help(0);
+	if (argv.h || argv.help) {
+		barfHelp(argv.help, 0);
 		return Promise.resolve();
 	} else if (argv._.length > 0) {
 		// Run a command
@@ -80,7 +81,7 @@ function runCommand(argv) {
 					}
 				}
 				if (isVerbose) {
-					console.log("Search query:", JSON.stringify(query, null, 4));
+					console.log("json-sample: Search query = ", JSON.stringify(query));
 				}
 				return api.search(query);
 			default:
@@ -99,13 +100,18 @@ function runCommand(argv) {
 	}
 }
 
+function barfHelp(verbose, exitCode) {
+	var helpFile = path.resolve(__dirname, verbose ?  'help.txt' : 'help-abbrev.txt');
+	help(helpFile)(exitCode || 0);
+}
+
 runCommand(argv)
 	.catch(function(e) {
 		if (e.error) {
 			console.error(e.error.message);
 		}
 		if (e.needHelp) {
-			help(1);
+			barfHelp(true, 1);
 		} else {
 			process.exit(1);
 		}
