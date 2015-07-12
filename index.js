@@ -2,6 +2,7 @@ var fse = require('fs-extra'),
 	path = require('path'),
 	Promise = require('promise'),
 	readJSON = Promise.denodeify(fse.readJSON),
+	writeJSON = Promise.denodeify(fse.writeJSON),
 	JSONSampleRegistry = require('./lib/registry/class'),
 	extractStats = require('./lib/registry/extract-stats'),
 	search = require('./lib/registry/search'),
@@ -152,6 +153,23 @@ module.exports = {
 				log(result);
 				logDone();
 			});
+	},
+
+	init: function() {
+		if (!fse.existsSync('./json-samples.json')) {
+			return localRegistry.read()
+				.then(function(data) {
+					data.samples = {};
+					return writeJSON('./json-samples.json', data, { spaces: 2 });
+				})
+				.done(function() {
+					log("created json-samples.json in directory");
+				})
+		} else {
+			log("json-samples.json already exists in directory");
+			return Promise.resolve();
+		}
+
 	}
 
 };
