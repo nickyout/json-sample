@@ -1,0 +1,36 @@
+Usage:  json-sample <command> [<args>]
+        json-sample init
+        json-sample install
+        json-sample search
+        json-sample sync [--force|-f]
+        json-sample add <name> <url> [--tags=<tag>,<tag>] [--force|-f]
+
+Methods:
+    init
+        Creates a new json-samples.json file in the current directory. It will have all remote registries
+        listed in your local registry, and no specified samples.
+
+    install
+        Installs all samples as dictated in the json-samples.json file in the current directory.
+
+    search
+        Search for particular samples.
+
+    sync [--force|-f]
+        Retrieve new samples for all remote registries referred to in the (local) registry.
+        By default, your local registry is considered to be 'the truth' and will be leading when
+        inconsistencies are found between your own and a remote.
+
+        With --force, when finding inconsistencies, the remote registries are considered the truth.
+
+    add <name> <url> [--tags=<tag>,<tag>] [--force|-f]
+        Add a new JSON sample to your local registry. The file will be downloaded, 'validated' as JSON
+        and some meta-data will be extracted. If all goes well, a new entry is added to your registry.
+        If the specified <name> and the <url> is already present in the repository, it will reject the addition.
+
+        With --force, the JSON sample is added even if it means overwriting an existing JSON sample.
+        With --tags=<tag>,<tag> (repeating) you can add tags to the entry.
+
+Options:
+    --help|-h
+        Shows this message.

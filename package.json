@@ -16,9 +16,11 @@
   "dependencies": {
     "bytes": "^2.1.0",
     "date.js": "^0.2.0",
+    "eventemitter3": "^1.1.1",
     "flat": "^1.6.0",
     "fs-extra": "^0.22.1",
     "got": "^3.3.0",
+    "help": "^2.1.0",
     "minimist": "^1.1.1",
     "promise": "^7.0.3",
     "tiny-sprintf": "^0.3.0"
