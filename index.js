@@ -29,6 +29,10 @@ var localRegistryPath = path.resolve(__dirname, 'registry.json'),
 
 module.exports = {
 
+	/**
+	 * Get the latest sample specs from all remote registries listed under 'remotes'
+	 * @param {Boolean} [force=false] - prefer remote sample specs over your own
+	 */
 	sync: function(force) {
 		var totalStats;
 		return sync(localRegistry, logError, force)
@@ -44,6 +48,13 @@ module.exports = {
 			});
 	},
 
+	/**
+	 * Add a new remote JSON to the registry
+	 * @param {String} name - the name to use in the registry for this JSON
+	 * @param {String} url - url to JSON file
+	 * @param {Array.<String>} [tags=[]] - associated tags
+	 * @param {Boolean} [force=false] - add even if name or url already exists in registry. Be careful with this.
+	 */
 	add: function(name, url, tags, force) {
 		return localRegistry.read()
 			.then(function(data) {
@@ -77,6 +88,9 @@ module.exports = {
 			});
 	},
 
+	/**
+	 * Download all specified samples from the file json-samples.json in the current directory.
+	 */
 	install: function() {
 		var numErrors = 0,
 			myRegistrySamples,
@@ -144,6 +158,11 @@ module.exports = {
 			});
 	},
 
+	/**
+	 * Search for JSON samples in the registry
+	 * @param {JSONSampleQueryShorthanded} query
+	 * @returns {Promise.<Array>} - the results
+	 */
 	search: function(query) {
 		return localRegistry.read()
 			.then(function(data) {
@@ -155,6 +174,11 @@ module.exports = {
 			});
 	},
 
+	/**
+	 * Create a new json-samples.json file in the current directory.
+	 * Does nothing if the file already exists.
+	 * @returns {Promise}
+	 */
 	init: function() {
 		if (!fse.existsSync('./json-samples.json')) {
 			return localRegistry.read()
@@ -169,7 +193,6 @@ module.exports = {
 			log("json-samples.json already exists in directory");
 			return Promise.resolve();
 		}
-
 	}
 
 };
