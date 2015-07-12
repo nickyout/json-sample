@@ -1,11 +1,12 @@
 {
-  "name": "json-samples",
+  "name": "json-sample",
   "version": "0.0.1",
   "description": "Pick and download sample json files from a preset list. Add your own.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": "./bin/cli.js",
   "keywords": [
     "JSON",
     "sample",
