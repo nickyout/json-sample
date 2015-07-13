@@ -19,7 +19,8 @@ var manMap = {
 	'sync': 'sync.txt',
 	'install': 'install.txt',
 	'init': 'init.txt',
-	'register': 'register.txt',
+	'add': 'add.txt',
+	'remove': 'remove.txt',
 	'default': 'index.txt'
 };
 
@@ -51,11 +52,26 @@ function isArgValid(arg) {
 var isVerbose = !!(argv.verbose || argv.v);
 
 api.on("log", function(e) {
+	var message = "json-sample: ";
 	if (e.error) {
-		console.error("json-sample: " + e.message + ": " + e.error.message + ". Skipping...");
-	} else {
-		console.log("json-sample: " + e.message);
+		message += 'X ';
+	} else switch (e.op) {
+		case "add":
+			message += "+ ";
+			break;
+		case "remove":
+			message += "- ";
+			break;
+		default:
+			message += "  ";
+			break;
 	}
+	message += e.message;
+	if (e.error) {
+		// always non-fatal
+		message += ": " + e.error.message + ". Skipping...";
+	}
+	console.log(message);
 });
 api.on("done", function(stats) {
 	var numErrors = stats.numErrors || 0;
@@ -121,7 +137,9 @@ function runCommand(argv) {
 					}
 				}
 				if (isVerbose) {
-					console.log("json-sample: Search query = ", JSON.stringify(query));
+					api.emit("log", {
+						"message": "Search query = " + JSON.stringify(query)
+					});
 				}
 				return api.search(query);
 			default:

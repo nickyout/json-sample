@@ -1,4 +1,4 @@
-Usage:  json-sample register <name> <url> [--tags=<tag>,<tag>] [--force|-f]
+Usage:  json-sample add <name> <url> [--tags=<tag>,<tag>] [--force|-f]
 
 Description:
 

@@ -1,7 +1,23 @@
 Usage:  json-sample install
+        json-sample install <name> <path> [--save]
 
-Description:
+Description: json-sample install
 
-    Installs all samples as dictated in the json-samples.json file in the current directory.
-    There isn't really much else to it.
+    Downloads all samples as dictated in the local json-samples.json file,
+    and saves them to their respective paths. If a destination file already exists (even if it is
+    not the same file), the sample will be omitted. If there are remotes in the json-samples.json file
+    that are not known locally, these remotes will be downloaded and their samples will take precedence
+    over the locally known samples.
 
+Description: json-sample install <name> <path> [--save]
+
+    Downloads a single sample <name> from the registry and saves it to destination <path>.
+    If a file already exists on <path> (even if it is not the same file), it will be omitted.
+    Any remotes mentioned in the json-samples.json file will not be downloaded.
+
+Options:
+
+      --save                store the reference to the local json-samples.json file
+
+See also:
+    json-sample search

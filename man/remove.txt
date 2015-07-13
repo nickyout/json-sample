@@ -1,0 +1,12 @@
+Usage:  json-sample remove <name> [--save]
+
+Description:
+
+    Removes samples referenced by the local json-samples.json file. It will read
+    the json-samples.json file, check the sample <name> and read its path. It will
+    then remove the file under that path.
+
+Options:
+
+      --save                remove the reference in the local json-samples.json file
+
