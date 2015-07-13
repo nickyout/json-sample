@@ -5,7 +5,14 @@ var argv = require('minimist')(process.argv.slice(2)),
 	Promise = require('promise'),
 	api = require("../index");
 
-var argEtcWhiteList = ['_', 'h', 'help', 'v', 'verbose', 'f', 'force', 'V', 'version'];
+var argWhiteList = [
+	'_',
+	'h', 'help',
+	'v', 'verbose',
+	'f', 'force',
+	'V', 'version',
+	'save'
+];
 
 var manMap = {
 	'search': 'search.txt',
@@ -38,18 +45,14 @@ var argMap = {
 };
 
 function isArgValid(arg) {
-	return argMap.hasOwnProperty(arg) || argEtcWhiteList.indexOf(arg) > -1;
+	return argMap.hasOwnProperty(arg) || argWhiteList.indexOf(arg) > -1;
 }
 
 var isVerbose = !!(argv.verbose || argv.v);
 
 api.on("log", function(e) {
 	if (e.error) {
-		if (e.isFatal) {
-			console.error("json-sample: Fatal error: " + e.message + ": " + e.error.message);
-		} else {
-			console.error("json-sample: " + e.message + ": " + e.error.message + ". Skipping...");
-		}
+		console.error("json-sample: " + e.message + ": " + e.error.message + ". Skipping...");
 	} else {
 		console.log("json-sample: " + e.message);
 	}
@@ -65,9 +68,10 @@ api.on('query', function (result) {
 });
 
 function runCommand(argv) {
-	var command = argv._[0],
+	var command = manTopic = argv._[0],
 		tags = null,
 		force = argv.force || argv.f,
+		doSave = !!argv.save,
 		query,
 		arg;
 
@@ -82,7 +86,8 @@ function runCommand(argv) {
 		for (arg in argv) {
 			if (!isArgValid(arg)) {
 				return Promise.reject({
-					error: new Error("Unknown option: " + arg + "\n"),
+					message: "invalid syntax",
+					error: new Error("unknown option \"" + arg + "\""),
 					needHelp: true
 				});
 			}
@@ -90,22 +95,23 @@ function runCommand(argv) {
 		// Run a command
 		switch (command) {
 			case "init":
-				manTopic = command;
 				return api.init();
 			case "install":
-				manTopic = command;
-				return api.install();
+				if (argv._[1]) {
+					return api.installSave(argv._[1], argv._[2], doSave);
+				} else {
+					return api.install();
+				}
+			case "remove":
+				return api.removeSave(argv._[1], doSave);
 			case "add":
-				manTopic = command;
 				if (argv.tags) {
 					tags = (argv.tags + '').split(',');
 				}
 				return api.add(argv._[1], argv._[2], tags, force);
 			case "sync":
-				manTopic = command;
 				return api.sync(force);
 			case "search":
-				manTopic = command;
 				query = {
 					name: argv._[1] || ''
 				};
@@ -121,7 +127,8 @@ function runCommand(argv) {
 			default:
 				// No such command
 				return Promise.reject({
-					error: new Error("Unknown command " + command + "\n"),
+					message: 'invalid syntax',
+					error: new Error("unknown command " + command + "\n"),
 					needHelp: true
 				});
 		}
@@ -135,8 +142,13 @@ function barfHelp(topic, exitCode) {
 
 runCommand(argv)
 	.catch(function(e) {
-		if (e.error) {
-			console.error("json-sample:", e.error.message);
+		var errorStr;
+		if (e.message) {
+			errorStr = "json-sample: (Fatal) " + e.message;
+			if (e.error) {
+				errorStr += ": " + e.error.message;
+			}
+			console.error(errorStr + "\n");
 		}
 		if (e.needHelp) {
 			barfHelp(manTopic, 1);

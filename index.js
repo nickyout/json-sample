@@ -1,5 +1,6 @@
 var path = require('path'),
 	JSONSampleRegistry = require('./lib/registry/class'),
+	JSONSamples = require('./lib/samples/class'),
 	EventEmitter = require('eventemitter3');
 
 var localRegistryPath = path.resolve(__dirname, 'registry.json');
@@ -7,6 +8,8 @@ var localRegistryPath = path.resolve(__dirname, 'registry.json');
 var api = new EventEmitter();
 
 api.registry = new JSONSampleRegistry(localRegistryPath);
+
+api.samples = new JSONSamples('./json-samples.json', api.registry);
 
 /**
  * Get the latest sample specs from all remote registries listed under 'remotes'
@@ -27,6 +30,21 @@ api.register = require('./lib/register');
  * Download all specified samples from the file json-samples.json in the current directory.
  */
 api.install = require('./lib/install');
+
+/**
+ * Download and save a sample form the registry to a certain path
+ * @param {String} name
+ * @param {String} path
+ * @param {Boolean} [doSave=false]
+ */
+api.installSave = require('./lib/install-save');
+
+/**
+ * Removes the associated file. If doSave is true, removes the reference from json-samples.json
+ * @param {String} name
+ * @param {Boolean} [doSave=false]
+ */
+api.removeSave = require('./lib/remove-save');
 
 /**
  * Search for JSON samples in the registry
