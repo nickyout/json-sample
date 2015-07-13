@@ -7,6 +7,17 @@ var argv = require('minimist')(process.argv.slice(2)),
 
 var argEtcWhiteList = ['_', 'h', 'help', 'v', 'verbose', 'f', 'force', 'V', 'version'];
 
+var manMap = {
+	'search': 'search.txt',
+	'sync': 'sync.txt',
+	'install': 'install.txt',
+	'init': 'init.txt',
+	'register': 'register.txt',
+	'default': 'index.txt'
+};
+
+var manTopic = '';
+
 var argMap = {
 	'tags': 		[String, 'tags'],
 	'date': 		[String, 'date'],
@@ -59,8 +70,9 @@ function runCommand(argv) {
 		force = argv.force || argv.f,
 		query,
 		arg;
+
 	if (!command || argv.h || argv.help) {
-		barfHelp(!command || argv.help, 0);
+		barfHelp(command, 0);
 		return Promise.resolve();
 	} else if (argv.V || argv.version) {
 		console.log("Enter version here.");
@@ -76,20 +88,24 @@ function runCommand(argv) {
 			}
 		}
 		// Run a command
-		command = argv._[0];
 		switch (command) {
 			case "init":
+				manTopic = command;
 				return api.init();
 			case "install":
+				manTopic = command;
 				return api.install();
 			case "add":
+				manTopic = command;
 				if (argv.tags) {
 					tags = (argv.tags + '').split(',');
 				}
 				return api.add(argv._[1], argv._[2], tags, force);
 			case "sync":
+				manTopic = command;
 				return api.sync(force);
 			case "search":
+				manTopic = command;
 				query = {
 					name: argv._[1] || ''
 				};
@@ -112,8 +128,8 @@ function runCommand(argv) {
 	}
 }
 
-function barfHelp(verbose, exitCode) {
-	var helpFile = path.resolve(__dirname, verbose ?  'help.txt' : 'help-abbrev.txt');
+function barfHelp(topic, exitCode) {
+	var helpFile = path.resolve(__dirname, '..', 'man', manMap[topic] || manMap['default']);
 	help(helpFile)(exitCode || 0);
 }
 
@@ -123,7 +139,7 @@ runCommand(argv)
 			console.error("json-sample:", e.error.message);
 		}
 		if (e.needHelp) {
-			barfHelp(false, 1);
+			barfHelp(manTopic, 1);
 		} else {
 			process.exit(1);
 		}

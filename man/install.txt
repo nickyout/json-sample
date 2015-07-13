@@ -1,0 +1,7 @@
+Usage:  json-sample install
+
+Description:
+
+    Installs all samples as dictated in the json-samples.json file in the current directory.
+    There isn't really much else to it.
+

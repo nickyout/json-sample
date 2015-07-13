@@ -21,7 +21,7 @@ api.sync = require('./lib/sync');
  * @param {Array.<String>} [tags=[]] - associated tags
  * @param {Boolean} [force=false] - add even if name or url already exists in registry. Be careful with this.
  */
-api.add = require('./lib/add');
+api.register = require('./lib/register');
 
 /**
  * Download all specified samples from the file json-samples.json in the current directory.

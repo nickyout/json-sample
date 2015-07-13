@@ -1,0 +1,12 @@
+Usage:  json-sample sync [--force|-f]
+
+Description:
+
+    Retrieve new samples for all remote registries referred to in the (local) registry.
+    By default, your local registry is considered to be 'the truth' and will be leading when
+    inconsistencies are found between your own and a remote.
+
+Options:
+
+  -f, --force               when finding inconsistencies, the remote registries are considered the truth.
+

@@ -1,0 +1,15 @@
+Usage:  json-sample init
+        json-sample install
+        json-sample sync [--force|-f]
+        json-sample search [<name>] [--bytes=<hr>][--max-depth=<n>][--homogenity=<n>][--booleans=<n>]
+                           [--strings=<n>][--numbers=<n>][--arrays=<n>][--objects=<n>][--nulls=<n>]
+                           [--[no-]special-chars][--[no-]exponential][--[no-]float][--[no-]negative]
+                           [--date=<hr>][--tags=<tag>,<tag>]
+        json-sample register <name> <url> [--tags=<tag>,<tag>] [--force|-f]
+        json-sample [<command>] -h|--help
+
+Description:
+
+    Search and download json-samples. Register new json samples. Share your registry?
+    Use -h|--help with a specific command to get specific help.
+

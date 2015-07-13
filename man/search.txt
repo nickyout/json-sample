@@ -1,0 +1,32 @@
+Usage:  json-sample search [<name>] [--bytes=<hr>][--max-depth=<n>][--homogenity=<n>][--booleans=<n>]
+                           [--strings=<n>][--numbers=<n>][--arrays=<n>][--objects=<n>][--nulls=<n>]
+                           [--[no-]special-chars][--[no-]exponential][--[no-]float][--[no-]negative]
+                           [--date=<hr>][--tags=<tag>,<tag>]
+
+Description:
+
+    Search for particular samples, using a range of filtering options.
+    A specified name is used as substring sequence to match to sample names, and is case-insensitive.
+    A boolean option's effect can be inverted by prefixing its name with "no-". All range options
+    use their values as 'at least'. Prefix the value with '-' to make them work as 'at most'.
+    Each option can only be used once.
+
+Options:
+
+      --bytes=<hr>          a sample must at least be this big. Accepts human-readable ('1MB').
+      --max-depth=<n>       a sample must at least have this recursion depth.
+      --homogenity=<n>      a sample must have at least this factor of homogenity.
+                            Higher means that (relatively) more objects share the same keys,
+      --booleans=<n>        a sample must at least have this many booleans
+      --strings=<n>         a sample must at least have this many strings
+      --numbers=<n>         a sample must at least have this many numbers
+      --arrays=<n>          a sample must at least have this many arrays
+      --objects=<n>         a sample must at least have this many objects
+      --nulls=<n>           a sample must at least have this many nulls
+      --[no-]special-chars  a sample must have (no) special chars in its strings or keys.
+      --[no-]exponential    a sample must have (no) exponentials among its numbers
+      --[no-]float          a sample must have (no) floats among its numbers
+      --[no-]negative       a sample must have (no) negative numbers among its numbers
+      --date=<hr>           a sample must added at this date or later. Accepts human-readable ('yesterday').
+      --tags=<tag>,<tag>    each tag must be present for a sample to pass
+
