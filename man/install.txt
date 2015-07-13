@@ -12,7 +12,11 @@ Description: json-sample install
 Description: json-sample install <name> <path> [--save]
 
     Downloads a single sample <name> from the registry and saves it to destination <path>.
-    If a file already exists on <path> (even if it is not the same file), it will be omitted.
+    A <path> can be a file or a (not yet existing) folder. If the path ends with no extension,
+    it is assumed to point to a folder. In this case, the sample url will be used to derive a file name.
+    If at this point the path still ends with no extension, ".json" will be appended to the path.
+
+    If a file already exists on the resulting path (even if it is not the same file), it will be left untouched.
     Any remotes mentioned in the json-samples.json file will not be downloaded.
 
 Options:
