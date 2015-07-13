@@ -1,7 +1,7 @@
 {
   "name": "json-sample",
   "version": "0.0.1",
-  "description": "Pick and download sample json files from a preset list. Add your own.",
+  "description": "Like npm for json samples, but then distributed.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,7 +13,7 @@
     "download"
   ],
   "author": "Nicky Out",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "dependencies": {
     "bytes": "^2.1.0",
     "date.js": "^0.2.0",
