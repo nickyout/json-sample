@@ -12,6 +12,6 @@ Usage:  json-sample init
 
 Description:
 
-    Search and download json-samples. Register new json samples. Share your registry?
+    Search and download json samples. Register new json samples. Share your registry?
     Use -h|--help with a specific command to get specific help.
 

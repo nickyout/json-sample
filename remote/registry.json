@@ -1,0 +1,49 @@
+{
+  "remotes": {
+    "origin": "http://github.com/nickyout/remote/registry.json"
+  },
+  "samples": {
+    "city-lots": {
+      "url": "https://cdn.rawgit.com/zemirco/sf-city-lots-json/33c27c137784a96d0fbd7f329dceda6cc7f49fa3/citylots.json",
+      "date": 1436704197649,
+      "tags": [
+        "city-lots"
+      ],
+      "numBytes": 189778220,
+      "stats": {
+        "maxDepth": 7,
+        "number": {
+          "amount": 7875189,
+          "hasFloat": true,
+          "hasExponential": false,
+          "hasNegative": true
+        },
+        "string": {
+          "amount": 2217825,
+          "hasSpecialChars": false,
+          "maxSize": 20
+        },
+        "key": {
+          "amount": 2891830,
+          "hasSpecialChars": false,
+          "maxSize": 11
+        },
+        "object": {
+          "amount": 619675,
+          "maxSize": 9,
+          "homogenity": 0.333
+        },
+        "array": {
+          "amount": 3038859,
+          "maxSize": 206560
+        },
+        "null": {
+          "amount": 54336
+        },
+        "boolean": {
+          "amount": 0
+        }
+      }
+    }
+  }
+}
