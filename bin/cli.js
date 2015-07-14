@@ -8,6 +8,7 @@ var argv = require('minimist')(process.argv.slice(2)),
 
 var argWhiteList = [
 	'_',
+	'm', 'description',
 	'h', 'help',
 	'v', 'verbose',
 	'f', 'force',
@@ -87,7 +88,7 @@ api.on('query', function (result) {
 function runCommand(argv) {
 	var command = manTopic = argv._[0],
 		tags = null,
-		description = (argv.m || '').substr(0, 50),
+		description = (argv.description || argv.m || '').substr(0, 60),
 		force = argv.force || argv.f,
 		doSave = !!argv.save,
 		query,
