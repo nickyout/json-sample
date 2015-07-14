@@ -3,7 +3,7 @@ var path = require('path'),
 	JSONSamples = require('./lib/samples/class'),
 	EventEmitter = require('eventemitter3');
 
-var localRegistryPath = path.resolve(__dirname, 'registry.json');
+var localRegistryPath = path.resolve(process.env.HOME, 'json-sample-registry.json');
 
 var api = new EventEmitter();
 
