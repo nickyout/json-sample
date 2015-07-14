@@ -9,7 +9,7 @@ var api = new EventEmitter();
 
 api.registry = new JSONSampleRegistry(localRegistryPath);
 
-api.samples = new JSONSamples('./json-samples.json', api.registry);
+api.samples = new JSONSamples('./json-sample.json', api.registry);
 
 /**
  * Get the latest sample specs from all remote registries listed under 'remotes'
