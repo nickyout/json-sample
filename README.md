@@ -28,7 +28,9 @@ $ node ./node_modules/.bin/json-sample --help
 
 ## How it works
 
-Once installed, you can browse sample files using `json-samples search [<name>]`. Like npm, any string you pass will be used as substring for matching repositories (though json-samples only checks in the name). Aside from the name, you have a plethora of filtering options, like `--bytes=1MB` (at least 1MB), `--tags=json-rpc` (must at least contain this exact tag) `--exponential` (must contain exponential numbers). It will barf out a sexy result:
+Once installed, you can browse sample files using `json-samples search [<name>]`. Like npm, any string you pass will be used as substring for matching repositories (though json-samples only checks in the name). Aside from the name, you have a plethora of filtering options, like `--bytes=1MB` (at least 1MB), `--tags=json-rpc` (must at least contain this exact tag) `--exponential` (must contain exponential numbers). The point is that you can search easier by your testing intent. 
+
+It will barf out a sexy result:
 
 ```
 $ json-sample search
@@ -79,6 +81,13 @@ It extract the stats needed for `json-sample search` automatically. Try adding y
 
 ## FAQ
 
+*If we all use the same test data, we also share the flaws in the test files*
+
+True. On the other hand, if you need to create the data yourself, you might forget corner cases that can be included in a shared test file. 
+
+I hope that test files will eventually become authoritative -  
+Yes. That is why, ideally, JSON test data needs to be sharpened over time. If these improvements are then shared, all users can benefit. 
+
 *JSON files are not that big*
 
 There is a JSON sample in the registry that is 180 MB big. I wanted that to be an option.  
@@ -89,7 +98,7 @@ It's pretty darn alpha at this point. I've tested it by hand. So far, I trust it
 
 *Why create another json file to put in my repo?*
 
-I want it to be simple to try out. If you don't like it, remove the `json-samples.json` file, `npm remove` my tool and it's gone. Also, no chance I screw up your precious package.json. 
+I want it to be simple to try out. If you don't like it, remove the `json-samples.json` file, remove the `.json-sample` folder in your home dir, `npm remove` my tool and everything is gone. Also, no chance I screw up your precious package.json. 
 
 ## TODO
 
