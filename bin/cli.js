@@ -87,6 +87,7 @@ api.on('query', function (result) {
 function runCommand(argv) {
 	var command = manTopic = argv._[0],
 		tags = null,
+		description = (argv.m || '').substr(0, 50),
 		force = argv.force || argv.f,
 		doSave = !!argv.save,
 		query,
@@ -125,12 +126,12 @@ function runCommand(argv) {
 				if (argv.tags) {
 					tags = (argv.tags + '').split(',');
 				}
-				return api.add(argv._[1], argv._[2], tags, force);
+				return api.add(argv._[1], argv._[2], description, tags, force);
 			case "sync":
 				return api.sync(force);
 			case "search":
 				query = {
-					name: argv._[1] || ''
+					match: argv._[1] || ''
 				};
 				for (arg in argv) {
 					if (argMap.hasOwnProperty(arg)) {
