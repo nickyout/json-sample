@@ -3,7 +3,7 @@ var path = require('path'),
 	JSONSamples = require('./lib/samples/class'),
 	EventEmitter = require('eventemitter3');
 
-var localRegistryPath = path.resolve(process.env.HOME, 'json-sample-registry.json');
+var localRegistryPath = path.resolve(process.env.HOME, '.json-sample', 'registry.json');
 
 var api = new EventEmitter();
 
@@ -21,6 +21,7 @@ api.sync = require('./lib/sync');
  * Add a new remote JSON file to the registry
  * @param {String} name - the name to use in the registry for this JSON
  * @param {String} url - url to JSON file
+ * @param {String} [description] - description of the file
  * @param {Array.<String>} [tags=[]] - associated tags
  * @param {Boolean} [force=false] - add even if name or url already exists in registry. Be careful with this.
  */
