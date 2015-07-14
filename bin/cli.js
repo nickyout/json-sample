@@ -1,10 +1,15 @@
 #!/usr/bin/env node
-var argv = require('minimist')(process.argv.slice(2)),
+var prompt = require("cli-prompt"),
+	argv = require('minimist')(process.argv.slice(2)),
 	path = require('path'),
 	help = require('help'),
 	parseQuery = require('../lib/util/parse-query'),
 	Promise = require('promise'),
 	api = require("../index");
+
+var prefix = 'json-sample: ';
+
+var regCommaSep = /[,\s]\s*/g;
 
 var argWhiteList = [
 	'_',
@@ -54,7 +59,7 @@ function isArgValid(arg) {
 var isVerbose = !!(argv.verbose || argv.v);
 
 api.on("log", function(e) {
-	var message = "json-sample: ";
+	var message = prefix;
 	if (e.error) {
 		message += 'X ';
 	} else switch (e.op) {
@@ -77,7 +82,7 @@ api.on("log", function(e) {
 });
 api.on("done", function(stats) {
 	var numErrors = stats.numErrors || 0;
-	console.log("json-sample: Done (" + numErrors + " error" + ((numErrors === 1) ? "" : "s") + ").");
+	console.log(prefix + "Done (" + numErrors + " error" + ((numErrors === 1) ? "" : "s") + ").");
 });
 api.on('query', function (result) {
 	parseQuery(result, isVerbose).forEach(function(str) {
@@ -124,10 +129,50 @@ function runCommand(argv) {
 			case "remove":
 				return api.removeSave(argv._[1], doSave);
 			case "add":
-				if (argv.tags) {
-					tags = (argv.tags + '').split(',');
+				if (argv._[1]) {
+					if (argv.tags) {
+						tags = (argv.tags + '').split(regCommaSep);
+					}
+					return api.add(argv._[1], argv._[2], description, tags, force);
+				} else {
+					return new Promise(
+						function(resolve, reject) {
+							api.emit("log", {
+								message: "(Ctrl+C to abort)"
+							});
+							prompt.multi([{
+								key: 'name',
+								label: 'name (required)',
+								validate: function(val) {
+									if (!val) { throw new Error("You must specify a name."); }
+								}
+							}, {
+								key: 'url',
+								label: 'url (required)',
+								validate: function(val) {
+									if (!val) { throw new Error("You must specify an url."); }
+								}
+							}, {
+								key: 'description',
+								label: 'description (max 60 characters)',
+								validate: function(val) {
+									if (val.length > 60) { throw new Error("Your description exceeds 60 characters (" + val.length + ")"); }
+								}
+							}, {
+								key: 'tags',
+								label: 'tags (comma-separated)'
+							}], resolve);
+						})
+						.then(function(answers) {
+							return api.add(
+								answers.name,
+								answers.url,
+								answers.description,
+								(answers.tags + '').split(regCommaSep),
+								force
+							);
+						});
 				}
-				return api.add(argv._[1], argv._[2], description, tags, force);
 			case "sync":
 				return api.sync(force);
 			case "search":
@@ -165,7 +210,7 @@ runCommand(argv)
 	.catch(function(e) {
 		var errorStr;
 		if (e.message) {
-			errorStr = "json-sample: (Fatal) " + e.message;
+			errorStr = prefix + "(Fatal) " + e.message;
 			if (e.error) {
 				errorStr += ": " + e.error.message;
 			}

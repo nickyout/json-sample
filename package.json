@@ -16,6 +16,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "bytes": "^2.1.0",
+    "cli-prompt": "^0.4.1",
     "date.js": "^0.2.0",
     "eventemitter3": "^1.1.1",
     "flat": "^1.6.0",

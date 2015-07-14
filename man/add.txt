@@ -1,13 +1,21 @@
-Usage:  json-sample add <name> <url> [--tags=<tag>,<tag>] [--force|-f]
+Usage:  json-sample add <name> <url> [-m|--description=<str>] [--tags=<tag>,<tag>] [-f|--force]
+        json-sample add [-f|--force]
 
-Description:
+Description: json-sample add <name> <url> [...options]
 
     Add a new JSON sample to your local registry. The file will be downloaded, 'validated' as JSON
     and some meta-data will be extracted. If all goes well, a new entry is added to your registry.
     If the specified <name> and the <url> is already present in the repository, it will reject the addition.
 
+Description: json-sample add [-f|--force]
+
+    Pass no <name> or <url> to trigger a series of prompts that will guide you through the arguments.
+    The option to overwrite (--force) will not be provided interactively, but you can still
+    specify it as a command option.
+
 Options:
 
   -f, --force               the JSON sample is added even if it means overwriting an existing JSON sample.
-      --tags=<tag>,<tag>    Include these tags with the entry. Separate each new tag with a comma.
+  -m, --description=<str>   Add this description to the entry.
+      --tags=<tag>,<tag>    Include these tags with the entry. Separate each new tag with a comma or space.
 
