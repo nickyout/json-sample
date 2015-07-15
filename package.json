@@ -1,6 +1,6 @@
 {
   "name": "json-sample",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Like npm for json samples, but then distributed.",
   "main": "index.js",
   "scripts": {
