@@ -1,17 +1,15 @@
-Usage:  json-sample init
-        json-sample install
-        json-sample install <name> <path> [--save]
-        json-sample remove <name> [--save]
-        json-sample sync [--force|-f]
-        json-sample search [<name>] [--bytes=<hr>][--max-depth=<n>][--homogenity=<n>][--booleans=<n>]
-                           [--strings=<n>][--numbers=<n>][--arrays=<n>][--objects=<n>][--nulls=<n>]
-                           [--[no-]special-chars][--[no-]exponential][--[no-]float][--[no-]negative]
-                           [--date=<hr>][--tags=<tag>,<tag>]
-        json-sample add <name> <url> [--tags=<tag>,<tag>] [--force|-f]
-        json-sample [<command>] -h|--help
+Usage:  json-sample [<command>] [-h|--help]
 
 Description:
 
-    Search and download json samples. Register new json samples. Share your registry?
+    Search and download json samples. Add new json samples. Share your registry?
     Use -h|--help with a specific command to get specific help.
+
+Commands:
+    init                    Create a json-sample.json file in the current directory
+    sync                    Update your local registry with the latest changes of remote registries
+    search                  Search your registry for specific json files
+    install                 Download json samples from the registry and/or add them to your json-samples file
+    remove                  Remove downloaded json samples and/or remove them from your json-samples file
+    add                     Add/update an entry in your local registry representing a json file.
 
