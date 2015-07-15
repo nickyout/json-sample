@@ -12,6 +12,10 @@
     "sample",
     "download"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickyout/json-sample.git"
+  },
   "author": "Nicky Out",
   "license": "GPL-3.0",
   "dependencies": {
