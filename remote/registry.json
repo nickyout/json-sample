@@ -1,6 +1,6 @@
 {
   "remotes": {
-    "origin": "https://github.com/nickyout/remote/registry.json"
+    "origin": "https://rawgit.com/nickyout/json-sample/master/remote/registry.json"
   },
   "samples": {
     "city-lots": {
