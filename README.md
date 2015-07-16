@@ -1,6 +1,8 @@
 # json-sample
 Like npm for json test data, but with your personal registry. 
 
+*After some thinking I have seen the error in trying to construct a system to replace npm merely for the sake of redundant statistics. I will probably be using npm for json fixtures instead of this. Regardless, if you like what you see, fork it and enjoy yourselves.*
+
 ## Introduction
 
 json-sample is a node cli to browse and download json samples based on urls from a registry. The point is to both easily find real/challenging json samples (as opposed to randomly generated ones) and prevent those files from bloating your repository. The advantage over using npm is that:
